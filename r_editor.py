@@ -21,14 +21,19 @@ def run_bot(subreddit, maxPosts):
 
     # loop through the link posts
     for index, post in enumerate(linkPosts):
-        print type(post.title)
-        print "post {0:0>3}: ".format(index + 1) + str(post.title)
+
+        # FIXME:some title have encoding problems
+        # print type(post.title)
+        # name = "post {0:0>3}: ".format(index + 1) + str(post.title)
         print "     url: {} ".format(str(post.url))
         print "  author: /u/{} ".format(str(post.author))
 
         # if link is a gfycat link : Download the mp4
-        # if 'gfycat' in post.url:
-        #     downloadUtils.gfycat_mp4(post.url, str(subreddit), index)
+        if 'gfycat' in post.url:
+            print "gfycat link"
+            downloadUtils.gfycat_mp4(post.url, str(subreddit), index)
+        elif 'imgur' in post.url:
+            print "imgur link"
 
         if index + 1 > maxPosts:
             break

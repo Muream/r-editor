@@ -16,7 +16,7 @@ def gfycat_mp4(url, subreddit, index):
     for source in soup.find_all('source', {"id": "mp4Source"}):
         fileUrl = source['src']
 
-        fileName = subreddit + '_{0:0>3}'.format(index+1) + '.' + fileUrl.split('.')[-1]
+        fileName = subreddit + '_{0:0>3}'.format(index + 1) + '.' + fileUrl.split('.')[-1]
         urllib.urlretrieve(fileUrl, directory + '/' + fileName)
 
 
