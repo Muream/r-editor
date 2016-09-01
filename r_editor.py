@@ -11,13 +11,14 @@ r = praw.Reddit(user_agent=USERAGENT)
 
 class clip(praw.objects.Submission):
     """
-    The clip class, inherited from the Submission class of Praw (not sure if it's the right one)
+    The clip class, inherited from the Submission class of Praw
+    (not sure if it's the right one)
     """
     def __init__(self, path):
         self.path = path
 
     def download_video(self):
-
+        pass
 
 
 def run_bot(subreddit, maxPosts):
