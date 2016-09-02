@@ -2,6 +2,11 @@ import requests
 from bs4 import BeautifulSoup
 import urllib
 import os
+import math
+import praw
+
+USERAGENT = "(r)editor v1.0 by /u/Muream"
+r = praw.Reddit(user_agent=USERAGENT)
 
 
 def check_dir(subreddit):
@@ -9,6 +14,29 @@ def check_dir(subreddit):
     if not os.path.exists(directory):
         os.makedirs(directory)
     return directory
+
+
+def round_up(x):
+    return int(math.ceil(x / 100.0)) * 100
+
+
+def get_posts(subreddit, maxPosts):
+    maxPosts = round_up(maxPosts)
+    subreddit = r.get_subreddit(subreddit)
+    posts = subreddit.get_top_from_all(limit=maxPosts)
+    linkPosts = []
+
+    # Flush the text posts
+    for post in posts:
+        if not post.is_self:
+            linkPosts.append(post)
+
+    if len(linkPosts) < maxPosts:
+        limitPosts += 100
+        print ""
+        posts = utils.get_posts(subreddit, maxPosts)
+
+    return linkPosts
 
 
 def gfycat_mp4(url, subreddit, index):

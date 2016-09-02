@@ -1,58 +1,46 @@
 import praw
-import downloadUtils
+import utils
 import sys
 
 
-USERAGENT = "(r)editor v1.0 by /u/Muream"
-limitPosts = 100
-
-r = praw.Reddit(user_agent=USERAGENT)
-
-
-class clip(praw.objects.Submission):
-    """
-    The clip class, inherited from the Submission class of Praw
-    (not sure if it's the right one)
-    """
-    def __init__(self, path):
-        self.path = path
-
-    def download_video(self):
-        pass
+# class clip(praw.objects.Submission):
+#     """
+#     The clip class, inherited from the Submission class of Praw
+#     (not sure if it's the right one)
+#     """
+#     def __init__(self, path):
+#         self.path = path
 
 
 def run_bot(subreddit, maxPosts):
-    subreddit = r.get_subreddit(subreddit)
-    posts = subreddit.get_top_from_all(limit=limitPosts)
-    linkPosts = []
+    posts = utils.get_posts(subreddit, maxPosts)
     clips = []
-    # Flush the text posts
-    for post in posts:
-        if not post.is_self:
-            linkPosts.append(post)
 
     # loop through the link posts
-    for index, post in enumerate(linkPosts):
+    for index, post in enumerate(posts):
 
         # FIXME: Some titles seem to have encoding problems
         # print type(post.title)
         # name = "post {0:0>3}: ".format(index + 1) + str(post.title)
-        print "     url: {} ".format(str(post.url))
-        print "  author: /u/{} ".format(str(post.author))
+
+        print index + 1
+        print "url: {} ".format(str(post.url))
+        print "author: /u/{} ".format(str(post.author))
 
         # if link is a gfycat link : Download the mp4
-        if 'gfycat' in post.url:
-            print "gfycat link"
-            directory = downloadUtils.gfycat_mp4(post.url, str(subreddit), index)
-        elif 'imgur' in post.url:
-            print "imgur link"
-            directory = downloadUtils.imgur_mp4(post.url, str(subreddit), index)
+        # if 'gfycat' in post.url:
+        #     print "gfycat link"
+        #     directory = downloadUtils.gfycat_mp4(post.url, str(subreddit), index)
+        # elif 'imgur' in post.url:
+        #     print "imgur link"
+        #     directory = downloadUtils.imgur_mp4(post.url, str(subreddit), index)
 
-        if index + 1 > maxPosts:
+        if index + 1 >= maxPosts:
+            print "break"
             break
         print
 
-        return clips
+    return clips
 
 
 def main():
