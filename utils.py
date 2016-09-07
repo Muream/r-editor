@@ -10,6 +10,9 @@ r = praw.Reddit(user_agent=USERAGENT)
 
 
 def check_dir(subreddit):
+    """
+    creates a directory to download the videos from the subreddit
+    """
     directory = os.path.join(os.path.dirname(__file__), 'Downloads/{}'.format(subreddit))
     directory = directory.replace('\\', '/')
     if not os.path.exists(directory):
@@ -44,37 +47,50 @@ def get_posts(subreddit, maxPosts):
     return linkPosts
 
 
-def gfycat_mp4(url, subreddit, index):
-    print "Downloading from gfycat..."
+def download_link(fileUrl, subreddit, index):
+    directory = check_dir(subreddit)
+    fileName = subreddit + '_{0:0>3}'.format(index + 1) + '.' + fileUrl.split('.')[-1]
+    path = directory + '/' + fileName
+    urllib.urlretrieve(fileUrl, directory + '/' + fileName)
+    return path
+
+def get_gfycat_mp4(url, subreddit, index):
+    """
+    get the link of the mp4 from gfycat
+    """
+    print "Downloading file {0:0>3} from gfycat...".format(index + 1)
     r = requests.get(url)
     soup = BeautifulSoup(r.content, "html.parser")
-    directory = check_dir(subreddit)
 
     # finds all the .mp4 files in the page
-    for source in soup.find_all('source', {"id": "mp4Source"}):
-        fileUrl = source['src']
+    sources = soup.find_all('source', {"id": "mp4Source"})
+    if len(sources) == 1:
+        fileUrl = sources[0]['src']
+    elif len(sources) == 0:
+        return None
+    else:
+        print "Got more Urls than expected, downloading the first one"
+        fileUrl = sources[0]['src']
 
-        fileName = subreddit + '_{0:0>3}'.format(index + 1) + '.' + fileUrl.split('.')[-1]
-        urllib.urlretrieve(fileUrl, directory + '/' + fileName)
-
-    path = directory + '/' + fileName
-
-    return path
+    return fileUrl
 
 
-def imgur_mp4(url, subreddit, index):
-    # find <source src="//i.imgur.com/randomVideoName.mp4" type="video/mp4">
-    print "Downloading from imgur..."
+def get_imgur_mp4(url, subreddit, index):
+    """
+    get the link of the mp4 from imgur
+    """
+    print "Downloading file {0:0>3} from imgur...".format(index + 1)
     r = requests.get(url)
     soup = BeautifulSoup(r.content, "html.parser")
-    directory = check_dir(subreddit)
 
-    for source in soup.find_all('source', {"type": "video/mp4"}):
-        fileUrl = "https:{}".format(source['src'])
+    # finds all the .mp4 files in the page
+    sources = soup.find_all('source', {"type": "video/mp4"})
+    if len(sources) == 1:
+        fileUrl = sources[0]['src']
+    elif len(sources) == 0:
+        return None
+    else:
+        print "Got more Urls than expected, downloading the first one"
+        fileUrl = sources[0]['src']
 
-        fileName = subreddit + '_{0:0>3}'.format(index + 1) + '.' + fileUrl.split('.')[-1]
-        urllib.urlretrieve(fileUrl, directory + '/' + fileName)
-
-    path = directory + '/' + fileName
-
-    return path
+    return fileUrl

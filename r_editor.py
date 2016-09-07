@@ -1,6 +1,6 @@
 import utils
-import sys
-from moviepy.editor import *
+import os
+import moviepy.editor as mpy
 
 
 class clip:
@@ -26,9 +26,14 @@ def get_clips(subreddit, maxPosts):
         print
         print "retrieving video #{0:0>3}".format(index + 1)
         if 'gfycat' in post.url:
-            path = utils.gfycat_mp4(post.url, str(subreddit), index)
+            url = utils.get_gfycat_mp4(post.url, str(subreddit), index)
         elif 'imgur' in post.url:
-            path = utils.imgur_mp4(post.url, str(subreddit), index)
+            url = utils.get_imgur_mp4(post.url, str(subreddit), index)
+        else:
+            continue
+        if url is None:
+            continue
+        path = utils.download_link(url, subreddit, index)
 
         currentClip = clip(post.title, post.url, post.author, index + 1, path)
         clips.append(currentClip)
@@ -44,11 +49,14 @@ def get_clips(subreddit, maxPosts):
 def edit_clips(clips, subreddit, maxPosts):
     paths = []
     for clip in clips:
-        currClip = VideoFileClip(clip.path)
-        currClip = vfx.resize(currClip, width=1280, height=720)
+        print clips.index(clip)
+        currClip = mpy.VideoFileClip(clip.path)
+        currClip = mpy.vfx.resize(currClip, width=1280, height=720)
         paths.append(currClip)
 
-    finalClip = concatenate_videoclips(paths)
+    finalClip = mpy.concatenate_videoclips(paths)
+    if not os.path.exists("Exports"):
+        os.makedirs("Exports")
     finalClip.write_videofile('Exports/{}_top{}.mp4'.format(subreddit, maxPosts), fps=24)
 
 
