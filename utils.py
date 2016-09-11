@@ -24,17 +24,47 @@ def round_up(x):
     return int(math.ceil(x / 100.0)) * 100
 
 
-def get_posts(subreddit, maxPosts):
+def get_posts(subreddit, maxPosts, sorting, time):
     retrievePosts = round_up(maxPosts)
     subreddit = r.get_subreddit(subreddit)
     print "Retrieving posts..."
-    posts = subreddit.get_top_from_all(limit=retrievePosts)
+
+    if sorting is "Hot":
+        posts = subreddit.get_hot(limit=retrievePosts)
+    elif sorting is "New":
+        posts = subreddit.get_new(limit=retrievePosts)
+    elif sorting is "Rising":
+        posts = subreddit.get_rising(limit=retrievePosts)
+    elif sorting is "Top":
+        if time is "Hour":
+            posts = subreddit.get_top_from_hour(limit=retrievePosts)
+        elif time is "Day":
+            posts = subreddit.get_top_from_day(limit=retrievePosts)
+        elif time is "Week":
+            posts = subreddit.get_top_from_week(limit=retrievePosts)
+        elif time is "Month":
+            posts = subreddit.get_top_from_month(limit=retrievePosts)
+        elif time is "All Time":
+            posts = subreddit.get_top_from_all(limit=retrievePosts)
+
     linkPosts = []
 
-    # Flush the text posts
+    # Flush the text posts and non downloadable links
+    print "flushing unusable posts..."
+    print "this might take some time..."
     for post in posts:
         if not post.is_self:
-            linkPosts.append(post)
+            if 'gfycat' in post.url:
+                url = get_gfycat_mp4(post.url, str(subreddit))
+            elif 'imgur' in post.url:
+                url = get_imgur_mp4(post.url, str(subreddit))
+            else:
+                url = None
+                print "Link not supported... skipping."
+            if url is not None:
+                linkPosts.append(post)
+            else:
+                print "post flushed"
 
     if len(linkPosts) < maxPosts:
         print
@@ -54,11 +84,11 @@ def download_link(fileUrl, subreddit, index):
     urllib.urlretrieve(fileUrl, directory + '/' + fileName)
     return path
 
-def get_gfycat_mp4(url, subreddit, index):
+
+def get_gfycat_mp4(url, subreddit):
     """
     get the link of the mp4 from gfycat
     """
-    print "Downloading file {0:0>3} from gfycat...".format(index + 1)
     r = requests.get(url)
     soup = BeautifulSoup(r.content, "html.parser")
 
@@ -75,11 +105,10 @@ def get_gfycat_mp4(url, subreddit, index):
     return fileUrl
 
 
-def get_imgur_mp4(url, subreddit, index):
+def get_imgur_mp4(url, subreddit):
     """
     get the link of the mp4 from imgur
     """
-    print "Downloading file {0:0>3} from imgur...".format(index + 1)
     r = requests.get(url)
     soup = BeautifulSoup(r.content, "html.parser")
 

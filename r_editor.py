@@ -16,7 +16,7 @@ class clip:
         self.path = path
 
 
-def get_clips(subreddit, maxPosts):
+def get_clips(subreddit, sorting, time, maxPosts):
     posts = utils.get_posts(subreddit, maxPosts)
     clips = []
 
@@ -26,9 +26,9 @@ def get_clips(subreddit, maxPosts):
         print
         print "retrieving video #{0:0>3}".format(index + 1)
         if 'gfycat' in post.url:
-            url = utils.get_gfycat_mp4(post.url, str(subreddit), index)
+            url = utils.get_gfycat_mp4(post.url, str(subreddit))
         elif 'imgur' in post.url:
-            url = utils.get_imgur_mp4(post.url, str(subreddit), index)
+            url = utils.get_imgur_mp4(post.url, str(subreddit))
         else:
             continue
         if url is None:
@@ -57,14 +57,18 @@ def edit_clips(clips, subreddit, maxPosts):
     finalClip = mpy.concatenate_videoclips(paths)
     if not os.path.exists("Exports"):
         os.makedirs("Exports")
-    finalClip.write_videofile('Exports/{}_top{}.mp4'.format(subreddit, maxPosts), fps=24)
+    absolutePath = os.path.abspath('Exports/{}_top{}.mp4'.format(subreddit, maxPosts))
+    print absolutePath
+    finalClip.write_videofile(absolutePath, fps=24)
 
 
-def main():
-    subreddit = raw_input("Subreddit: ")
-    maxPosts = 5
+def main(subreddit, sorting, time, maxPosts):
+    print "subreddit: " + subreddit
+    print "sorting: " + sorting
+    print "time: " + time
+    print "maxPosts: " + str(maxPosts)
     print
-    clips = get_clips(subreddit, maxPosts)
+    clips = get_clips(subreddit, sorting, time, maxPosts)
     edit_clips(clips, subreddit, maxPosts)
 
 if __name__ == '__main__':
