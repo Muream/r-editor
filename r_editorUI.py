@@ -71,7 +71,6 @@ class ReditorUI(QtGui.QMainWindow):
 
     def create_clips_layout(self):
         self.clipsLayout = QtGui.QHBoxLayout()
-        # Todo use QtGui.QSpinBox
         self.clipsSB = QtGui.QSpinBox()
         self.clipsLayout.addWidget(self.clipsSB)
 
@@ -81,14 +80,22 @@ class ReditorUI(QtGui.QMainWindow):
         self.launchLayout = QtGui.QHBoxLayout()
         self.launchButton = QtGui.QPushButton("r-edit!")
 
-        self.launchButton.released.connect(self.do_edit_clips)
+        self.launchButton.released.connect(self.launch_redit)
 
         self.launchLayout.addWidget(self.launchButton)
 
         self.centralWidget().layout().addLayout(self.launchLayout)
 
-    def do_edit_clips(self):
-        r_editor.main(self.subredditTxtBox.text())
+    def launch_redit(self):
+        self.subreddit = self.subredditTxtBox.text()
+        self.sorting = self.sortingCB.currentText()
+        self.time = self.timeCB.currentText()
+        self.maxPosts = self.clipsSB.value()
+        r_editor.r_edit(self.subreddit,
+                        self.sorting,
+                        self.time,
+                        self.maxPosts
+                        )
 
     def lock_times(self):
         if self.sortingCB.currentText() == "Top":

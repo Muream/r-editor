@@ -24,27 +24,36 @@ def round_up(x):
     return int(math.ceil(x / 100.0)) * 100
 
 
-def get_posts(subreddit, maxPosts, sorting, time):
+def get_posts(subreddit, sorting, time, maxPosts):
     retrievePosts = round_up(maxPosts)
     subreddit = r.get_subreddit(subreddit)
     print "Retrieving posts..."
-
-    if sorting is "Hot":
+    print
+    if sorting == "Hot":
+        print "Hot !"
         posts = subreddit.get_hot(limit=retrievePosts)
-    elif sorting is "New":
+    elif sorting == "New":
+        print "New !"
         posts = subreddit.get_new(limit=retrievePosts)
-    elif sorting is "Rising":
+    elif sorting == "Rising":
+        print "Rising !"
         posts = subreddit.get_rising(limit=retrievePosts)
-    elif sorting is "Top":
-        if time is "Hour":
+    elif sorting == "Top":
+        print "Top !"
+        if time == "Hour":
+            print "Hour !"
             posts = subreddit.get_top_from_hour(limit=retrievePosts)
-        elif time is "Day":
+        elif time == "Day":
+            print "Day !"
             posts = subreddit.get_top_from_day(limit=retrievePosts)
-        elif time is "Week":
+        elif time == "Week":
+            print "Week !"
             posts = subreddit.get_top_from_week(limit=retrievePosts)
-        elif time is "Month":
+        elif time == "Month":
+            print "Month !"
             posts = subreddit.get_top_from_month(limit=retrievePosts)
-        elif time is "All Time":
+        elif time == "All Time":
+            print "All Time !"
             posts = subreddit.get_top_from_all(limit=retrievePosts)
 
     linkPosts = []

@@ -17,7 +17,7 @@ class clip:
 
 
 def get_clips(subreddit, sorting, time, maxPosts):
-    posts = utils.get_posts(subreddit, maxPosts)
+    posts = utils.get_posts(subreddit, sorting, time, maxPosts)
     clips = []
 
     # loop through the link posts and downloads from gfycat or imgur
@@ -62,14 +62,14 @@ def edit_clips(clips, subreddit, maxPosts):
     finalClip.write_videofile(absolutePath, fps=24)
 
 
-def main(subreddit):
+def r_edit(subreddit, sorting, time, maxPosts):
     print "subreddit: " + subreddit
-    # print "sorting: " + subreddit
-    # print "time: " + time
-    # print "maxPosts: " + str(maxPosts)
-    # print
-    # clips = get_clips(subreddit, sorting, time, maxPosts)
-    # edit_clips(clips, subreddit, maxPosts)
+    print "sorting: " + sorting
+    print "time: " + time
+    print "maxPosts: " + str(maxPosts)
+    print
+    clips = get_clips(subreddit, str(sorting), time, maxPosts)
+    edit_clips(clips, subreddit, maxPosts)
 
 if __name__ == '__main__':
-    main()
+    r_edit()
