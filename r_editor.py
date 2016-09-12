@@ -62,14 +62,14 @@ def edit_clips(clips, subreddit, maxPosts):
     finalClip.write_videofile(absolutePath, fps=24)
 
 
-def main(subreddit, sorting, time, maxPosts):
+def main(subreddit):
     print "subreddit: " + subreddit
-    print "sorting: " + sorting
-    print "time: " + time
-    print "maxPosts: " + str(maxPosts)
-    print
-    clips = get_clips(subreddit, sorting, time, maxPosts)
-    edit_clips(clips, subreddit, maxPosts)
+    # print "sorting: " + subreddit
+    # print "time: " + time
+    # print "maxPosts: " + str(maxPosts)
+    # print
+    # clips = get_clips(subreddit, sorting, time, maxPosts)
+    # edit_clips(clips, subreddit, maxPosts)
 
 if __name__ == '__main__':
     main()
